@@ -31,4 +31,13 @@ for filePath in $filePaths; do
   rm -rf $filePathChangedExtension
   mkdir -p $filePathChangedExtension
   unzip $filePath -d $filePathChangedExtension
+  for potentialXmlFile in $(find $filePathChangedExtension -type f); do
+    fileType="$(file -ib $potentialXmlFile)"
+    if [ ${fileType:0:8} != "text/xml" ]; then
+      continue
+    fi
+    xmllint --format $potentialXmlFile > "$potentialXmlFile temp.xml"
+    mv "$potentialXmlFile temp.xml" $potentialXmlFile
+    rm -f "$potentialXmlFile temp.xml"
+  done
 done
